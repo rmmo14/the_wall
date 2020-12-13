@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Successful Login</title>
+</head>
+
+<body>
+    <h2>{{user.first_name}}{{user.last_name}}!</h2>
+    <h3>Successfully registered (or logged in)</h3>
+    <p>
+        <a href="/logout">Log Out</a>
+    </p>
+    <div>
+        <form action="/post_message" method="POST">
+            {% csrf_token %}
+            <p>Post a Message</p>
+            <textarea name="messages"></textarea>
+            <button type="submit">Post</button>
+        </form>
+    </div>
+    <div>
+        {% if messages %} {% for message in messages reversed %}
+        <h3>{{message.poster.first_name}} {{message.poster.last_name}} - {{message.created_at}}</h3>
+        <h4>{{message.message}}</h4>
+        {% if message.post_comments %} {% for post_comment in message.post_comments.all reversed %}
+        <h5>{{post_comment.poster.first_name}} {{post_comment.poster.last_name}} - {{post_comment.created_at}}</h5>
+        <h5>{{post_comment.comment}}</h5>
+        {% endfor %} {% endif %}
+        <form action="/post_comment/{{message.id}}" method="POST">
+            {% csrf_token %}
+            <textarea name="post_comments"></textarea>
+            <button type="submit">Post a comment</button>
+        </form>
+        {% endfor %} {% endif %}
+    </div>
+
+</body>
+
+</html>
